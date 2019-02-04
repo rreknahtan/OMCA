@@ -1,6 +1,6 @@
 # OMCA ‘Merge Terms’ Tool for Cleanup of Duplicate Authority Terms
 
-The merge terms tool is a python script that utilizes CollectionSpace’s service layer api to merge duplicate authority records into a single authority record and then delete the unwanted duplicate. T
+The merge terms tool is a python script that utilizes CollectionSpace’s service layer api to merge duplicate authority records into a single authority record and then delete the unwanted duplicate. 
 
 The tool works by querying the api for all of the records in which the term to be deleted is used, then it updates all of those records replacing the term to be deleted with the term to be kept. Finally, if all of instances of the term to be deleted are successfully removed the authority record for the term is deleted. If for any reason an instances of the term to be removed remains the tool will list the record(s) where the term remains and will not delete the authority record for the term.
 
