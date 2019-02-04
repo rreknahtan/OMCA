@@ -10,11 +10,11 @@ The script is run via the command line and requires 3 arguments in the following
 
 Valid authority types are:
 
-concept
-org 
-location 
-place
-person
+concept \n
+org  \n
+location \n 
+place \n
+person \n
 
 Here is an example of how the command should look:
 
