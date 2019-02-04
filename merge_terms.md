@@ -6,6 +6,8 @@ The tool works by querying the api for all of the records in which the term to b
 
 ### Usage:
 
+Before using add your cspace credentials in the user and pword variables, or change code to accept them as arguments, etc. You may also need to edit the base_url variable to reflect the address for your instance if not running from the server.
+
 The script is run via the command line and requires 3 arguments in the following order: the authority type, csid of the term being merged into (kept), and the csid of the unwanted duplicate to be deleted. 
 
 Valid authority types are:
