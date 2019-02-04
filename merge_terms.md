@@ -18,13 +18,13 @@ Valid authority types are:
 
 Here is an example of how the command should look:
 
-python merge_terms org ccc778d8-b8cf-4865-8d1b-ddd66d1c6753 d1f52fed-a4e5-421b-a4ba-4c09653ed39f
+``python merge_terms org ccc778d8-b8cf-4865-8d1b-ddd66d1c6753 d1f52fed-a4e5-421b-a4ba-4c09653ed39f``
 
 After executing the command it will provide some feedback about how many records it will attempt to update, how many records were successfully updated, and if the duplicate term was deleted or not. Here is an example:
 
-Found 3 records to be updated.
+``Found 3 records to be updated.
 All records were successfully updated.
-d1f52fed-a4e5-421b-a4ba-4c09653ed39f successfully deleted.
+d1f52fed-a4e5-421b-a4ba-4c09653ed39f successfully deleted.``
 
 If for some reason there are records that cannot be updated they will be listed in the output and the duplicate term will not be deleted.
 
