@@ -30,12 +30,12 @@ If for some reason there are records that cannot be updated they will be listed 
 
 ### Limitations:
 
-Currently if ther tool can only handle 1000 references at a time. This means of the term to be deleted is used more than 1000 times you’ll (very unlikely) the tool would need to be run with the same input until all records were merged.
-Cross-authority merges - currently the tool only merges terms within the same authority, v.2 should add support for cross authority merges.
-Does not currently work with taxon authority, another feature to be included in v.2
+* Currently if ther tool can only handle 1000 references at a time. This means of the term to be deleted is used more than 1000 times you’ll (very unlikely) the tool would need to be run with the same input until all records were merged.
+* Cross-authority merges - currently the tool only merges terms within the same authority, v.2 should add support for cross authority merges.
+* Does not currently work with taxon authority, another feature to be included in v.2
 
 
 ### Requirements:
 
-Python3 with the [requests](http://docs.python-requests.org/en/master/) library installed
-Valid cspace credentials for an account with delete permissions
+* Python3 with the [requests](http://docs.python-requests.org/en/master/) library installed
+* Valid cspace credentials for an account with delete permissions
