@@ -37,5 +37,5 @@ Does not currently work with taxon authority, another feature to be included in 
 
 ### Requirements:
 
-Python3 with the requests library installed
+Python3 with the (http://docs.python-requests.org/en/master/ "requests") library installed
 Valid cspace credentials for an account with delete permissions
