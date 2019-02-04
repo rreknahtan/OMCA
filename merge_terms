@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+
+import requests
+import sys
+import re
+
+
+user = ''
+pword = ''
+headers = {'Content-Type': 'application/xml'}
+baseurl = 'http://localhost:8180/cspace-services'
+urlparams = '/refObjs?pgSz=1000'
+newcsid = sys.argv[2]
+oldcsid = sys.argv[3]
+to_update = []
+vocabs = ['concept', 'org', 'location', 'place', 'person']
+success = []
+failed = []
+
+
+# retrieve the refname for authority term
+def getrefname(csid, vocab):
+    info = requests.get(baseurl + '/' + vocab + '/*/items/' + csid,
+                        headers=headers, auth=(user, pword))
+    refname = re.search('<refName>(.*?)</refName>', info.text)
+    return(refname.group(1))
+
+
+# retrieve the uris of records that use the 'old term' and add them to a list
+def getobjs(oldcsid):
+    usedby = requests.get(baseurl + '/' + termvocab + '/*/items/' + oldcsid +
+                          urlparams, headers=headers, auth=(user, pword))
+    for match in re.findall('<uri>(.*?)</uri>', usedby.text):
+        to_update.append(match)
+        to_update.sort()
+    print('Found ' + str(len(to_update)) + ' records to be updated.')
+
+
+# update list of records replacing 'old term' wth term being merged into and
+# remove core and account info sections of the xml before uploading updated
+# data and reading back a list of any failed attemps
+def updateobjs(uri, oldrefname, newrefname):
+    record = requests.get(baseurl + uri, headers=headers, auth=(user, pword))
+    core = re.search('<ns2:collectionspace_core(.*?)</ns2:collectionspace'
+                     '_core>', record.text, re.DOTALL)
+    accnt = re.search('<ns2:account_permission(.*?)</ns2:account_permission>',
+                      record.text, re.DOTALL)
+    updated = record.text.replace(oldrefname, newrefname)
+    for_upload = updated.replace(accnt.group(0), '').replace(core.group(0), '')
+    update = requests.put(baseurl + uri, headers=headers, data=for_upload,
+                          auth=(user, pword))
+    if update.status_code == 200:
+        success.append(uri)
+    else:
+        failed.append(uri)
+
+
+# remove term that is no longer used
+def deloldterm(csid):
+    remove = requests.delete(baseurl + '/' + termvocab + '/*/items/' + csid,
+                             auth=(user, pword))
+    return(remove.status_code)
+
+
+# put all the functions together and execute
+def mergeterms():
+    oldrefname = getrefname(oldcsid, termvocab)
+    newrefname = getrefname(newcsid, termvocab)
+    getobjs(oldcsid)
+    for uri in to_update:
+        updateobjs(uri, oldrefname, newrefname)
+    if len(failed) == 0:
+        print('All records were successfully updated.')
+        if deloldterm(oldcsid) == 200:
+            print(oldcsid + ' successfully deleted.')
+        else:
+            print('Error deleteing term: ' + oldcsid)
+    else:
+        print(str(len(success)) + ' records were successfully updated.' + '\n'
+              'the following records were not updated:')
+        for item in failed:
+            print(item)
+
+
+# data validation for authority type
+if sys.argv[1] not in vocabs:
+        print('Invalid authority use one of the following:')
+        for v in vocabs:
+            print(v)
+else:
+    termvocab = sys.argv[1] + 'authorities'
+    mergeterms()
