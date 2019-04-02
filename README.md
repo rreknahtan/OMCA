@@ -6,4 +6,4 @@ Some simple tools developed for managing collectionspace at OMCA.
 
 **newfixblob** - Script to fix blobs with missing derivatives. Supply csv with: image filenmae, media handling csid, damaged blob csid, uri / url to source image for upload
 
-**merger_terms** - See [merge_terms.md](./merge_terms.md) for documentation.
+**merger_terms** - A tool for mergeing duplicate authority terms. See [merge_terms.md](./merge_terms_tool/merge_terms.md) for documentation.
