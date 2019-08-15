@@ -33,7 +33,10 @@ def getobjs(oldcsid):
     for match in re.findall('<uri>(.*?)</uri>', usedby.text):
         to_update.append(match)
         to_update.sort()
-    print('Found ' + str(len(to_update)) + ' records to be updated.')
+    count = re.search('<totalItems>(.*?)</totalItems>',
+                      usedby.text, re.DOTALL).group(1)
+    print('Found ' + count + ' records to be updated.')
+    return(count)
 
 
 # update list of records replacing 'old term' wth term being merged into and
@@ -66,18 +69,23 @@ def deloldterm(csid):
 def mergeterms():
     oldrefname = getrefname(oldcsid, termvocab)
     newrefname = getrefname(newcsid, termvocab)
-    getobjs(oldcsid)
+    countUsedby = getobjs(oldcsid)
     for uri in to_update:
         updateobjs(uri, oldrefname, newrefname)
     if len(failed) == 0:
-        print('All records were successfully updated.')
-        if deloldterm(oldcsid) == 200:
-            print(oldcsid + ' successfully deleted.')
+        if int(countUsedby) < 1000:
+            print('All records were successfully updated.')
+            if deloldterm(oldcsid) == 200:
+                print(oldcsid + ' successfully deleted.')
+            else:
+                print('Error deleteing term: ' + oldcsid)
         else:
-            print('Error deleteing term: ' + oldcsid)
+            print(str(len(success)) + ' records successfully deleted.'
+                  ' Re-run merge_terms to update remaining ' +
+                  str(int(countUsedby) - len(success)) + ' records')
     else:
-        print(str(len(success)) + ' records were successfully updated.' + '\n'
-              'the following records were not updated:')
+        print(str(len(success)) + ' records were successfully updated.'
+              + '\n the following records were not updated:')
         for item in failed:
             print(item)
 
