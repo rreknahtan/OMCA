@@ -80,7 +80,7 @@ def mergeterms():
             else:
                 print('Error deleteing term: ' + oldcsid)
         else:
-            print(str(len(success)) + ' records successfully deleted.'
+            print(str(len(success)) + ' records successfully updated.'
                   ' Re-run merge_terms to update remaining ' +
                   str(int(countUsedby) - len(success)) + ' records')
     else:
