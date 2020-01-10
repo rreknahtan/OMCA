@@ -5,10 +5,10 @@ import sys
 import re
 
 
-user = ''
-pword = ''
+user = 'nkerr@museumca.org'
+pword = 'basqbasq'
 headers = {'Content-Type': 'application/xml; charset=utf-8'}
-baseurl = 'http://localhost:8180/cspace-services'
+baseurl = 'http://10.99.1.11:8180/cspace-services'
 urlparams = '/refObjs?pgSz=1000'
 newcsid = sys.argv[2]
 oldcsid = sys.argv[3]
@@ -97,4 +97,7 @@ if sys.argv[1] not in vocabs:
             print(v)
 else:
     termvocab = sys.argv[1] + 'authorities'
-    mergeterms()
+    if oldcsid == newcsid:
+        print('Cannot merge ' + oldcsid + ' with ' + newcsid)
+    else:
+        mergeterms()
