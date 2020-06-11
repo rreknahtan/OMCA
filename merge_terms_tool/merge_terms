@@ -7,7 +7,7 @@ import re
 user = ''
 pword = ''
 headers = {'Content-Type': 'application/xml; charset=utf-8'}
-baseurl = 'http://10.99.1.11:8180/cspace-services'
+baseurl = 'http://10.99.1.13:8180/cspace-services'
 urlparams = '/refObjs?pgSz=1000'
 newcsid = sys.argv[2]
 oldcsid = sys.argv[3]
