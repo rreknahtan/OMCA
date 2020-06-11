@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import requests
 import sys
 import re
@@ -16,6 +15,9 @@ to_update = []
 vocabs = ['concept', 'org', 'location', 'place', 'person']
 success = []
 failed = []
+relToDel = []
+relSuccess = []
+relFailed = []
 
 
 # retrieve the refname for authority term
@@ -38,6 +40,19 @@ def getobjs(oldcsid):
     print('Found ' + count + ' records to be updated.')
     return(count)
 
+# get a list of all the hierarchy rleationships that involve the oldterm
+def getRels(csid):
+    objRelations = requests.get(baseurl + '/relations?obj=' + csid,
+                                headers=headers, auth=(user, pword))
+    for match in re.findall('<relation-list-item><uri>(.*?)</uri>', objRelations.text):
+        relToDel.append(match)
+        relToDel.sort()
+    
+    subjRelations = requests.get(baseurl + '/relations?sbj=' + csid,
+                                 headers=headers, auth=(user, pword))
+    for sbjMatch in re.findall('<relation-list-item><uri>(.*?)</uri>', subjRelations.text):
+        relToDel.append(sbjMatch)
+        relToDel.sort()
 
 # update list of records replacing 'old term' wth term being merged into and
 # remove core and account info sections of the xml before uploading updated
@@ -58,6 +73,13 @@ def updateobjs(uri, oldrefname, newrefname):
         failed.append(uri)
 
 
+def delRels(uri):
+    remove = requests.delete(baseurl + uri, auth=(user, pword))
+    if remove.status_code == 200:
+        relSuccess.append(uri)
+    else:
+        relFailed.append(uri)
+
 # remove term that is no longer used
 def deloldterm(csid):
     remove = requests.delete(baseurl + '/' + termvocab + '/*/items/' + csid,
@@ -69,6 +91,7 @@ def deloldterm(csid):
 def mergeterms():
     oldrefname = getrefname(oldcsid, termvocab)
     newrefname = getrefname(newcsid, termvocab)
+    getRels(oldcsid)
     countUsedby = getobjs(oldcsid)
     for uri in to_update:
         updateobjs(uri, oldrefname, newrefname)
@@ -88,13 +111,19 @@ def mergeterms():
               + '\n the following records were not updated:')
         for item in failed:
             print(item)
+    for csid in relToDel:
+        delRels(csid)
+    if len(relFailed) == 0:
+        print('All hierarchy relationships were sucessfully deleted.')
+    else:
+        print('Error deleting the following hierarchy relationships: ' + ', '.join(relFailed))
 
 
 # data validation for authority type
 if sys.argv[1] not in vocabs:
-        print('Invalid authority use one of the following:')
-        for v in vocabs:
-            print(v)
+    print('Invalid authority use one of the following:')
+    for v in vocabs:
+        print(v)
 else:
     termvocab = sys.argv[1] + 'authorities'
     if oldcsid == newcsid:
